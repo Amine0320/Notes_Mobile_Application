@@ -46,49 +46,51 @@ class _RegisterViewState extends State<RegisterView> {
     //         );
     //       } else {
     //         return
-    return Column(
-      children: [
-        TextField(
-          controller: _emailController,
-          decoration: InputDecoration(labelText: 'Email'),
-          autocorrect: false,
-          enableSuggestions: false,
-          keyboardType: TextInputType.emailAddress,
-        ),
-        TextField(
-          controller: _passwordController,
-          decoration: InputDecoration(labelText: 'Password'),
-          obscureText: true,
-          autocorrect: false,
-          enableSuggestions: false,
-        ),
-        TextButton(
-          onPressed: () async {
-            final email = _emailController.text;
-            final password = _passwordController.text;
+    return Scaffold(
+        appBar: AppBar(title: Text('Register View !')),
+        body: Column(
+          children: [
+            TextField(
+              controller: _emailController,
+              decoration: InputDecoration(labelText: 'Email'),
+              autocorrect: false,
+              enableSuggestions: false,
+              keyboardType: TextInputType.emailAddress,
+            ),
+            TextField(
+              controller: _passwordController,
+              decoration: InputDecoration(labelText: 'Password'),
+              obscureText: true,
+              autocorrect: false,
+              enableSuggestions: false,
+            ),
+            TextButton(
+              onPressed: () async {
+                final email = _emailController.text;
+                final password = _passwordController.text;
 
-            try {
-              final userCredential =
-                  await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                email: email,
-                password: password,
-              );
-              print(userCredential);
-            } on FirebaseAuthException catch (e) {
-              if (e.code == 'weak-password') {
-                print('Weak Password !');
-                // print('Error occurred: $e');
-              } else if (e.code == 'email-already-in-use') {
-                print('Email already in use !');
-              } else if (e.code == 'invalid-email') {
-                print('Invalid Email ! ');
-              }
-            }
-          },
-          child: const Text('Register'),
-        ),
-      ],
-    );
+                try {
+                  final userCredential = await FirebaseAuth.instance
+                      .createUserWithEmailAndPassword(
+                    email: email,
+                    password: password,
+                  );
+                  print(userCredential);
+                } on FirebaseAuthException catch (e) {
+                  if (e.code == 'weak-password') {
+                    print('Weak Password !');
+                    // print('Error occurred: $e');
+                  } else if (e.code == 'email-already-in-use') {
+                    print('Email already in use !');
+                  } else if (e.code == 'invalid-email') {
+                    print('Invalid Email ! ');
+                  }
+                }
+              },
+              child: const Text('Register'),
+            ),
+          ],
+        ));
   }
 }
 
