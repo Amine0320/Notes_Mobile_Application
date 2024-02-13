@@ -1,7 +1,7 @@
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:notes_app/firebase_options.dart';
+// import 'package:notes_app/firebase_options.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -31,63 +31,66 @@ class _LoginViewState extends State<LoginView> {
 //
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
-      body: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
+    // FIRST LOGIC
+    // return Scaffold(
+    //   appBar: AppBar(
+    //     title: const Text('Login'),
+    //   ),
+    //   body: FutureBuilder(
+    //     future: Firebase.initializeApp(
+    //       options: DefaultFirebaseOptions.currentPlatform,
+    //     ),
+    //     builder: (context, snapshot) {
+    //       if (snapshot.connectionState == ConnectionState.waiting) {
+    //         return const Center(
+    //           child: CircularProgressIndicator(),
+    //         );
+    //       } else {
+    //         return ;
+    return Column(
+      children: [
+        TextField(
+          controller: _emailController,
+          decoration: InputDecoration(labelText: 'Email'),
+          autocorrect: false,
+          enableSuggestions: false,
+          keyboardType: TextInputType.emailAddress,
         ),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            return Column(
-              children: [
-                TextField(
-                  controller: _emailController,
-                  decoration: InputDecoration(labelText: 'Email'),
-                  autocorrect: false,
-                  enableSuggestions: false,
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                TextField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                  autocorrect: false,
-                  enableSuggestions: false,
-                ),
-                TextButton(
-                  onPressed: () async {
-                    final email = _emailController.text;
-                    final password = _passwordController.text;
+        TextField(
+          controller: _passwordController,
+          decoration: InputDecoration(labelText: 'Password'),
+          obscureText: true,
+          autocorrect: false,
+          enableSuggestions: false,
+        ),
+        TextButton(
+          onPressed: () async {
+            final email = _emailController.text;
+            final password = _passwordController.text;
 
-                    try {
-                      final userCredential = await FirebaseAuth.instance
-                          .signInWithEmailAndPassword(
-                        email: email,
-                        password: password,
-                      );
-                      print(userCredential);
-                    } on FirebaseAuthException catch (e) {
-                      if (e.code == 'usernot-found') {
-                        print('User Not Found');
-                      } else if (e.code == 'worng-password') {
-                        print('Wrong Password !');
-                      }
-                    }
-                  },
-                  child: const Text('Login'),
-                ),
-              ],
-            );
-          }
-        },
-      ),
+            try {
+              final userCredential =
+                  await FirebaseAuth.instance.signInWithEmailAndPassword(
+                email: email,
+                password: password,
+              );
+              print(userCredential);
+            } on FirebaseAuthException catch (e) {
+              if (e.code == 'usernot-found') {
+                print('User Not Found');
+              } else if (e.code == 'worng-password') {
+                print('Wrong Password !');
+              }
+            }
+          },
+          child: const Text('Login'),
+        ),
+      ],
     );
   }
 }
+//         },
+//       ),
+//     );
+//   }
+// }
