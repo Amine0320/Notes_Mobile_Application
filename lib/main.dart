@@ -6,8 +6,11 @@ import 'package:notes_app/views/login_view.dart';
 import 'package:notes_app/views/register_view.dart';
 import 'package:notes_app/views/verify_email_view.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(
     MaterialApp(
       title: 'Flutter Demo',
@@ -39,9 +42,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      ),
+      future: Future.delayed(Duration.zero),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Loading indicator !
@@ -53,23 +54,24 @@ class HomePage extends StatelessWidget {
           if (user != null) {
             if (user.emailVerified) {
               print('Email is verified');
+              return const Text(
+                  'Done'); // Return a different view when email is verified
             } else {
               return const VerifyEmailView();
             }
           } else {
             return const LoginView();
+            // OLD LOGIC
+            // final user = FirebaseAuth.instance.currentUser;
+            // // print(user);
+            // if (user?.emailVerified ?? false) {
+            //   print('You are a verified user ! ');
+            // } else {
+            //   return const VerifyEmailView();
+            //   // Push the verify email view to the home screen
+            // }
+            // return const Text('Done');
           }
-          return const Text('Done');
-          // OLD LOGIC
-          // final user = FirebaseAuth.instance.currentUser;
-          // // print(user);
-          // if (user?.emailVerified ?? false) {
-          //   print('You are a verified user ! ');
-          // } else {
-          //   return const VerifyEmailView();
-          //   // Push the verify email view to the home screen
-          // }
-          // return const Text('Done');
         }
       },
     );
