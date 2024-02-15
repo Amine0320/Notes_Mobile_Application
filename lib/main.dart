@@ -41,28 +41,43 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Future.delayed(Duration.zero),
+    return FutureBuilder<User?>(
+      future: FirebaseAuth.instance.authStateChanges().first,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // Loading indicator !
+          // Loading indicator
           return const Center(
             child: CircularProgressIndicator(),
           );
-        } else if (snapshot.connectionState == ConnectionState.done) {
-          final user = FirebaseAuth.instance.currentUser;
+        } else if (snapshot.hasError) {
+          // Error handling
+          return const Center(
+            child: Text('Error'),
+          );
+        } else {
+          final user = snapshot.data;
           if (user != null) {
-            if (user.emailVerified) {
-              return const NotesView();
-            } else {
-              return const VerifyEmailView();
-            }
+            return FutureBuilder<void>(
+              future: user.reload(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  // Loading indicator while user data is being refreshed
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  if (user.emailVerified) {
+                    return const NotesView();
+                  } else {
+                    return const VerifyEmailView();
+                  }
+                }
+              },
+            );
           } else {
             return const LoginView();
           }
         }
-        // Default return value
-        return Container(); // You can return any widget here, based on your requirements
       },
     );
   }
