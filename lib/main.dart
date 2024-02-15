@@ -49,30 +49,20 @@ class HomePage extends StatelessWidget {
           return const Center(
             child: CircularProgressIndicator(),
           );
-        } else {
+        } else if (snapshot.connectionState == ConnectionState.done) {
           final user = FirebaseAuth.instance.currentUser;
           if (user != null) {
             if (user.emailVerified) {
-              print('Email is verified');
-              return const Text(
-                  'Done'); // Return a different view when email is verified
+              return const NotesView();
             } else {
               return const VerifyEmailView();
             }
           } else {
             return const LoginView();
-            // OLD LOGIC
-            // final user = FirebaseAuth.instance.currentUser;
-            // // print(user);
-            // if (user?.emailVerified ?? false) {
-            //   print('You are a verified user ! ');
-            // } else {
-            //   return const VerifyEmailView();
-            //   // Push the verify email view to the home screen
-            // }
-            // return const Text('Done');
           }
         }
+        // Default return value
+        return Container(); // You can return any widget here, based on your requirements
       },
     );
   }
@@ -89,9 +79,9 @@ class _NotesViewState extends State<NotesView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Main UI'),
-      ),
-    );
+        appBar: AppBar(
+          title: const Text('Main UI'),
+        ),
+        body: const Text('Hello World ! '));
   }
 }
