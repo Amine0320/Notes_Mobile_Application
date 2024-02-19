@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:notes_app/firebase_options.dart';
 import 'dart:developer' as devtools show log;
 
+import 'package:notes_app/contants/routes.dart';
+
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
 
@@ -72,12 +74,15 @@ class _LoginViewState extends State<LoginView> {
               final password = _passwordController.text;
 
               try {
-                final userCredential =
-                    await FirebaseAuth.instance.signInWithEmailAndPassword(
+                await FirebaseAuth.instance.signInWithEmailAndPassword(
                   email: email,
                   password: password,
                 );
-                devtools.log(userCredential.toString());
+                // Change on notes app but not in kaisi test app ATTENTION !
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  NotesRoute,
+                  (route) => false,
+                );
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'usernot-found') {
                   devtools.log('User Not Found');
@@ -91,7 +96,7 @@ class _LoginViewState extends State<LoginView> {
           TextButton(
               onPressed: () {
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/register/',
+                  RegisterRoute,
                   (route) => false,
                 );
               },
@@ -100,7 +105,7 @@ class _LoginViewState extends State<LoginView> {
       ),
     );
   }
-} 
+}
 //         },
 //       ),
 //     );
