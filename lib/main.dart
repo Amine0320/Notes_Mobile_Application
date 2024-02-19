@@ -1,18 +1,14 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:notes_app/contants/routes.dart';
-import 'package:notes_app/firebase_options.dart';
+import 'package:notes_app/exceptions/auth/auth_service.dart';
 import 'package:notes_app/views/login_view.dart';
+import 'package:notes_app/views/notes_view.dart';
 import 'package:notes_app/views/register_view.dart';
 import 'package:notes_app/views/verify_email_view.dart';
 //import 'dart:developer' as devtools show log;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
   runApp(
     MaterialApp(
       title: 'Flutter Demo',
@@ -45,8 +41,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<User?>(
-      future: FirebaseAuth.instance.authStateChanges().first,
+    return FutureBuilder(
+      future: AuthService.firebase().intialize(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Loading indicator
@@ -59,7 +55,7 @@ class HomePage extends StatelessWidget {
             child: Text('Error'),
           );
         } else {
-          final user = snapshot.data;
+          final user = AuthService.firebase().currentUser;
           if (user != null) {
             return FutureBuilder<void>(
               future: user.reload(),
@@ -70,7 +66,7 @@ class HomePage extends StatelessWidget {
                     child: CircularProgressIndicator(),
                   );
                 } else {
-                  if (user.emailVerified) {
+                  if (user.isEmailVerified) {
                     return const NotesView();
                   } else {
                     return const VerifyEmailView();
@@ -85,74 +81,4 @@ class HomePage extends StatelessWidget {
       },
     );
   }
-}
-
-enum MenuAction { logout }
-// Notes View !
-
-class NotesView extends StatefulWidget {
-  const NotesView({super.key});
-
-  @override
-  State<NotesView> createState() => _NotesViewState();
-}
-
-class _NotesViewState extends State<NotesView> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Main UI'),
-          // Interface for logout item from popopmenuitem
-          actions: [
-            PopupMenuButton<MenuAction>(
-              onSelected: (value) async {
-                switch (value) {
-                  case MenuAction.logout:
-                    final ShouldLogOut = await showLogOutDialog(context);
-                    // devtools.log(ShouldLogOut.toString());
-                    if (ShouldLogOut) {
-                      await FirebaseAuth.instance.signOut();
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        LoginRoute,
-                        (route) => false,
-                      );
-                    }
-                }
-              },
-              itemBuilder: (context) {
-                return const [
-                  PopupMenuItem<MenuAction>(
-                      value: MenuAction.logout, child: Text('Log Out')),
-                ];
-              },
-            )
-          ],
-        ),
-        body: const Text('Hello World ! '));
-  }
-}
-
-// SHOWLOGOUT DIALOG FUNCTION POPOUT LOGIC INTERFACE HERE
-Future<bool> showLogOutDialog(BuildContext context) {
-  return showDialog<bool>(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-          title: const Text('Sign out'),
-          content: const Text('Are you sure you want to sign out ?'),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: const Text('Cancel')),
-            TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: const Text('Log out')),
-          ]);
-    },
-  ).then((value) => value ?? false);
 }
