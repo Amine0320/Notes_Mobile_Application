@@ -79,11 +79,19 @@ class _LoginViewState extends State<LoginView> {
                   email: email,
                   password: password,
                 );
+                final user = FirebaseAuth.instance.currentUser;
+                if (user?.emailVerified ?? false) {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    NotesRoute,
+                    (route) => false,
+                  );
+                } else {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    VerifyEmailRoute,
+                    (route) => false,
+                  );
+                }
                 // Change on notes app but not in kaisi test app ATTENTION !
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  NotesRoute,
-                  (route) => false,
-                );
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'usernot-found') {
                   await showErrorDialog(context, 'User not found');
