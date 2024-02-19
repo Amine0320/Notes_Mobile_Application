@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:notes_app/firebase_options.dart';
-import 'dart:developer' as devtools show log;
 import 'package:notes_app/contants/routes.dart';
+import 'package:notes_app/utilities/show_error_log.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -72,21 +72,26 @@ class _RegisterViewState extends State<RegisterView> {
                 final password = _passwordController.text;
 
                 try {
-                  final userCredential = await FirebaseAuth.instance
-                      .createUserWithEmailAndPassword(
+                  await FirebaseAuth.instance.createUserWithEmailAndPassword(
                     email: email,
                     password: password,
                   );
-                  devtools.log(userCredential.toString());
+                  final user = FirebaseAuth.instance.currentUser;
+                  await user?.sendEmailVerification();
+                  // Navigating to verify email view
+                  Navigator.of(context).pushNamed(VerifyEmailRoute);
                 } on FirebaseAuthException catch (e) {
                   if (e.code == 'weak-password') {
-                    devtools.log('Weak Password !');
-                    // print('Error occurred: $e');
+                    showErrorDialog(context, 'Weak password');
                   } else if (e.code == 'email-already-in-use') {
-                    devtools.log('Email already in use !');
+                    showErrorDialog(context, 'Email already in user');
                   } else if (e.code == 'invalid-email') {
-                    devtools.log('Invalid Email ! ');
+                    showErrorDialog(context, 'Invalid email address');
+                  } else {
+                    await showErrorDialog(context, e.toString());
                   }
+                } catch (e) {
+                  await showErrorDialog(context, e.toString());
                 }
               },
               child: const Text('Register'),
@@ -103,5 +108,4 @@ class _RegisterViewState extends State<RegisterView> {
         ));
   }
 }
-
 //
