@@ -19,10 +19,10 @@ void main() async {
       home: const HomePage(),
       // Route of the application
       routes: {
-        LoginRoute: (context) => const LoginView(),
-        RegisterRoute: (context) => const RegisterView(),
-        NotesRoute: (context) => const NotesView(),
-        VerifyEmailRoute: (context) => const VerifyEmailView(),
+        loginRoute: (context) => const LoginView(),
+        registerRoute: (context) => const RegisterView(),
+        notesRoute: (context) => const NotesView(),
+        verifyEmailRoute: (context) => const VerifyEmailView(),
       },
     ),
   );
@@ -34,7 +34,7 @@ void main() async {
 //   Disconnected,
 //   Connecting,
 // }
-
+// LOGIC
 // HomePage STL
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

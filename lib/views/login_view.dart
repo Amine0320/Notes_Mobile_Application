@@ -1,8 +1,4 @@
-// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-// import 'package:notes_app/firebase_options.dart';
-//import 'dart:developer' as devtools show log;
-
 import 'package:notes_app/contants/routes.dart';
 import 'package:notes_app/exceptions/auth/auth_exceptions.dart';
 import 'package:notes_app/exceptions/auth/auth_service.dart';
@@ -83,12 +79,12 @@ class _LoginViewState extends State<LoginView> {
                 final user = AuthService.firebase().currentUser;
                 if (user?.isEmailVerified ?? false) {
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                    NotesRoute,
+                    notesRoute,
                     (route) => false,
                   );
                 } else {
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                    VerifyEmailRoute,
+                    verifyEmailRoute,
                     (route) => false,
                   );
                 }
@@ -106,7 +102,7 @@ class _LoginViewState extends State<LoginView> {
           TextButton(
               onPressed: () {
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  RegisterRoute,
+                  registerRoute,
                   (route) => false,
                 );
               },
