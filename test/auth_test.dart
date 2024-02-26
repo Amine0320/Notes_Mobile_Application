@@ -38,12 +38,14 @@ void main() {
         badEmailUser,
         throwsA(const TypeMatcher<UserNotFoundAuthException>()),
       );
+
       final badPasswordUser = provider.createUser(
           email: 'someone@splinter.com', password: 'foobar');
       expect(
         badPasswordUser,
-        throwsA(const TypeMatcher<UserNotFoundAuthException>()),
+        throwsA(const TypeMatcher<WrongPasswordAuthException>()),
       );
+
       final user = await provider.createUser(email: 'foo', password: 'bar');
       expect(provider.currentUser, user);
       expect(user.isEmailVerified, false);
