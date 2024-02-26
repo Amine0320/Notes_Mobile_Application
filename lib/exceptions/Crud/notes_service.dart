@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:notes_app/exceptions/Crud/crud_exceptions.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart'
     show MissingPlatformDirectoryException, getApplicationCacheDirectory;
@@ -26,23 +27,6 @@ const createUserTable = ''' CREATE TABLE IF NOT EXIST "User" (
 	"email"	TEXT NOT NULL UNIQUE,
 	PRIMARY KEY("Id" AUTOINCREMENT)
 );''';
-
-// Exceptions
-class DataBaseAlreadyOpenException implements Exception {}
-
-class UnableToGetDocumentsException implements Exception {}
-
-class DataBaseIsNotOpenException implements Exception {}
-
-class CouldNotDeleteUserException implements Exception {}
-
-class UserAlreadyExistExceptions implements Exception {}
-
-class CouldNotDeleteNoteExceptions implements Exception {}
-
-class CouldNotFindNoteException implements Exception {}
-
-class CouldNotUpdateNoteException implements Exception {}
 
 class NotesService {
   Database? _db;
