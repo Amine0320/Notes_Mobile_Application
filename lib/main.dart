@@ -36,6 +36,8 @@ void main() async {
 // }
 // LOGIC
 // HomePage STL
+
+//LOGIC NEED TO IMPLEMENT INTO KAISI TEST APP
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
