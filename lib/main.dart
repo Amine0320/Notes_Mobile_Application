@@ -5,13 +5,12 @@ import 'package:notes_app/views/login_view.dart';
 import 'package:notes_app/views/notes_view.dart';
 import 'package:notes_app/views/register_view.dart';
 import 'package:notes_app/views/verify_email_view.dart';
-//import 'dart:developer' as devtools show log;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Notes App',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
@@ -27,15 +26,6 @@ void main() async {
     ),
   );
 }
-
-// Connection state
-// enum ConnectionState {
-//   Connected,
-//   Disconnected,
-//   Connecting,
-// }
-// LOGIC
-// HomePage STL
 
 //LOGIC NEED TO IMPLEMENT INTO KAISI TEST APP
 class HomePage extends StatelessWidget {
