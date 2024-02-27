@@ -23,13 +23,6 @@ class _NotesViewState extends State<NotesView> {
     super.initState();
   }
 
-  // Closing
-  @override
-  void dispose() {
-    _notesService.close();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,7 +45,7 @@ class _NotesViewState extends State<NotesView> {
                     await AuthService.firebase().logOut();
                     Navigator.of(context).pushNamedAndRemoveUntil(
                       loginRoute,
-                      (route) => false,
+                      (_) => false,
                     );
                   }
               }
@@ -77,9 +70,15 @@ class _NotesViewState extends State<NotesView> {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
                       case ConnectionState.active:
-                        return const Text("Waiting for all Notes ....");
+                        if (snapshot.hasData) {
+                          final allNotes = snapshot.data as List<DataBaseNote>;
+                          print(allNotes);
+                          return const Text("Got All Notes");
+                        } else {
+                          return const CircularProgressIndicator();
+                        }
                       default:
-                        return CircularProgressIndicator();
+                        return const CircularProgressIndicator();
                     }
                   });
             default:
