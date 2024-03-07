@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/exceptions/Crud/notes_service.dart';
 import 'package:notes_app/exceptions/auth/auth_service.dart';
+import 'package:notes_app/utilities/generics/get_argument.dart';
 
 class NewNoteView extends StatefulWidget {
   const NewNoteView({super.key});
@@ -38,7 +39,14 @@ class _NewNoteViewState extends State<NewNoteView> {
     _textController.addListener(_textControllerListener);
   }
 
-  Future<DataBaseNote> createNewNote() async {
+  Future<DataBaseNote> createOrGetExistingNote(BuildContext context) async {
+    final widgetNote = context.getArgument<DataBaseNote>();
+    if (widgetNote != null) {
+      _note = widgetNote;
+      _textController.text = widgetNote.text;
+      return widgetNote;
+    }
+
     final existingNote = _note;
     if (existingNote != null) {
       return existingNote;
@@ -46,7 +54,9 @@ class _NewNoteViewState extends State<NewNoteView> {
     final currentUser = AuthService.firebase().currentUser!;
     final email = currentUser.email!;
     final owner = await _notesService.getUser(email: email);
-    return await _notesService.createNote(owner: owner);
+    final newNote = await _notesService.createNote(owner: owner);
+    _note = newNote;
+    return newNote;
   }
 
   void _deleteNoteIfTextIsEmpty() {
@@ -77,11 +87,10 @@ class _NewNoteViewState extends State<NewNoteView> {
     return Scaffold(
       appBar: AppBar(title: const Text("New note")),
       body: FutureBuilder(
-        future: createNewNote(),
+        future: createOrGetExistingNote(context),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
-              _note = snapshot.data as DataBaseNote;
               _setupTextControllerListener();
               return TextField(
                 controller: _textController,
