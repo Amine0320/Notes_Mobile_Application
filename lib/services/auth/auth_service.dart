@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:notes_app/exceptions/auth/auth_provider.dart';
-import 'package:notes_app/exceptions/auth/auth_user.dart';
-import 'package:notes_app/exceptions/auth/firebase_auth_provider.dart';
+import 'package:notes_app/services/auth/auth_provider.dart';
+import 'package:notes_app/services/auth/auth_user.dart';
+import 'package:notes_app/services/auth/firebase_auth_provider.dart';
 import 'package:notes_app/firebase_options.dart';
 
 class AuthService implements AuthProvider {

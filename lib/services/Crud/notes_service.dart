@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/widgets.dart';
-import 'package:notes_app/exceptions/Crud/crud_exceptions.dart';
+import 'package:notes_app/services/Crud/crud_exceptions.dart';
 import 'package:notes_app/extensions/list/filter.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart'

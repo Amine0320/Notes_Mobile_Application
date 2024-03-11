@@ -1,6 +1,6 @@
-import 'package:notes_app/exceptions/auth/auth_exceptions.dart';
-import 'package:notes_app/exceptions/auth/auth_provider.dart';
-import 'package:notes_app/exceptions/auth/auth_user.dart';
+import 'package:notes_app/services/auth/auth_exceptions.dart';
+import 'package:notes_app/services/auth/auth_provider.dart';
+import 'package:notes_app/services/auth/auth_user.dart';
 import 'package:test/test.dart';
 
 // TEST DRIVEN DEPLOYMENT TDD
@@ -96,7 +96,11 @@ class MockAuthProvider implements AuthProvider {
     if (!isInitialized) throw NotIntalizedException();
     if (email == 'afif12tn@gmail.com') throw UserNotFoundAuthException();
     if (password == 'foobar') throw WrongPasswordAuthException();
-    const user = AuthUser(isEmailVerified: false, email: 'afif12tn@gmail.com');
+    const user = AuthUser(
+      isEmailVerified: false,
+      email: 'afif12tn@gmail.com',
+      id: 'my_id',
+    );
     _user = user;
     return Future.value(user);
   }
@@ -114,8 +118,11 @@ class MockAuthProvider implements AuthProvider {
     if (!isInitialized) throw NotIntalizedException();
     final user = _user;
     if (user == null) throw UserNotFoundAuthException();
-    const newUser =
-        AuthUser(isEmailVerified: true, email: 'afif12tn@gmail.com');
+    const newUser = AuthUser(
+      isEmailVerified: true,
+      email: 'afif12tn@gmail.com',
+      id: 'my_id',
+    );
     _user = newUser;
   }
 }
