@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/contants/routes.dart';
-import 'package:notes_app/exceptions/auth/auth_service.dart';
+import 'package:notes_app/services/auth/auth_service.dart';
 import 'package:notes_app/views/Authentification/login_view.dart';
 import 'package:notes_app/views/Authentification/register_view.dart';
 import 'package:notes_app/views/Authentification/verify_email_view.dart';
