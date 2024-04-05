@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:notes_app/contants/routes.dart';
+// import 'package:notes_app/contants/routes.dart';
 import 'package:notes_app/services/auth/auth_exceptions.dart';
 // import 'package:notes_app/services/auth/auth_service.dart';
 import 'package:notes_app/services/auth/bloc/auth_bloc.dart';
 import 'package:notes_app/services/auth/bloc/auth_event.dart';
+import 'package:notes_app/services/auth/bloc/auth_state.dart';
 import 'package:notes_app/utilities/dialogs/error_dialog.dart';
+import 'package:notes_app/utilities/dialogs/loading_dialog.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -17,6 +19,7 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
+  CloseDialog? _closeDialogHandler;
 
   @override
   void initState() {
@@ -51,30 +54,57 @@ class _LoginViewState extends State<LoginView> {
     //         );
     //       } else {
     //         return ;
-    return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
-      body: Column(
-        children: [
-          TextField(
-            controller: _emailController,
-            decoration: InputDecoration(labelText: 'Email'),
-            autocorrect: false,
-            enableSuggestions: false,
-            keyboardType: TextInputType.emailAddress,
-          ),
-          TextField(
-            controller: _passwordController,
-            decoration: InputDecoration(labelText: 'Password'),
-            obscureText: true,
-            autocorrect: false,
-            enableSuggestions: false,
-          ),
-          TextButton(
-            onPressed: () async {
-              final email = _emailController.text;
-              final password = _passwordController.text;
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) async {
+        if (state is AuthStateLoggedOut) {
+          final closeDialog = _closeDialogHandler;
+          // closing dialog
+          if (!state.isLoading && closeDialog != null) {
+            closeDialog();
+            _closeDialogHandler = null;
+          }
+          // open dialog
+          if (state.isLoading && closeDialog == null) {
+            _closeDialogHandler = showLoadingDialog(
+              context: context,
+              text: 'Loading .... ',
+            );
+          }
+          if (state.exception is UserNotFoundAuthException ||
+              state.exception is WrongPasswordAuthException) {
+            await showErrorDialog(context, 'User-not-found');
+          }
+          // else if (state.exception is WrongPasswordAuthException) {
+          //   await showErrorDialog(context, 'Wrong crendetials');
+          // }
+          else if (state.exception is GenericAuthException) {
+            await showErrorDialog(context, 'Authentification Error');
+          }
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Login')),
+        body: Column(
+          children: [
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(labelText: 'Email'),
+              autocorrect: false,
+              enableSuggestions: false,
+              keyboardType: TextInputType.emailAddress,
+            ),
+            TextField(
+              controller: _passwordController,
+              decoration: const InputDecoration(labelText: 'Password'),
+              obscureText: true,
+              autocorrect: false,
+              enableSuggestions: false,
+            ),
+            TextButton(
+              onPressed: () async {
+                final email = _emailController.text;
+                final password = _passwordController.text;
 
-              try {
                 // await AuthService.firebase().logIn(
                 //   email: email,
                 //   password: password,
@@ -96,25 +126,30 @@ class _LoginViewState extends State<LoginView> {
                       password,
                     ));
                 // Change on notes app but not in kaisi test app ATTENTION !
-              } on UserNotFoundAuthException {
-                await showErrorDialog(context, 'User not found');
-              } on WrongPasswordAuthException {
-                await showErrorDialog(context, 'Wrong Password ');
-              } on GenericAuthException {
-                await showErrorDialog(context, 'Authentification Error');
-              }
-            },
-            child: const Text('Login'),
-          ),
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  registerRoute,
-                  (route) => false,
-                );
+                //   } on UserNotFoundAuthException {
+                //     await showErrorDialog(context, 'User not found');
+                //   } on WrongPasswordAuthException {
+                //     await showErrorDialog(context, 'Wrong Password ');
+                //   } on GenericAuthException {
+                //     await showErrorDialog(context, 'Authentification Error');
+                //   }
               },
-              child: const Text('Not registred yet ? Register Me ! ')),
-        ],
+              child: const Text('Login'),
+              // ),
+            ),
+            TextButton(
+                onPressed: () {
+                  // Navigator.of(context).pushNamedAndRemoveUntil(
+                  //   registerRoute,
+                  //   (route) => false,
+                  // );
+                  context.read<AuthBloc>().add(
+                        const AuthEventShouldRegister(),
+                      );
+                },
+                child: const Text('Not registred yet ? Register Me ! ')),
+          ],
+        ),
       ),
     );
   }
@@ -125,4 +160,3 @@ class _LoginViewState extends State<LoginView> {
 //     );
 //   }
 // }
-// ALERT WHILE ERROR OCCURED IN LOG IN
