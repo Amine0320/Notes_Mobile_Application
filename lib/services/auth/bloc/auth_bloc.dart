@@ -47,6 +47,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         exception: null,
         isLoading: true,
       ));
+      // await Future.delayed(const Duration(seconds: 3));
       final email = event.email;
       final password = event.password;
       try {
