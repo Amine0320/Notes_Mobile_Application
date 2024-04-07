@@ -5,6 +5,7 @@ import 'package:notes_app/services/auth/bloc/auth_bloc.dart';
 import 'package:notes_app/services/auth/bloc/auth_event.dart';
 import 'package:notes_app/services/auth/bloc/auth_state.dart';
 import 'package:notes_app/services/auth/firebase_auth_provider.dart';
+import 'package:notes_app/utilities/dialogs/loading_dialog.dart';
 import 'package:notes_app/views/Authentification/login_view.dart';
 import 'package:notes_app/views/Authentification/register_view.dart';
 import 'package:notes_app/views/Authentification/verify_email_view.dart';
@@ -38,7 +39,17 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.read<AuthBloc>().add(const AuthEventIntialize());
-    return BlocBuilder<AuthBloc, AuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state.isLoading) {
+          LoadingScreen().show(
+            context: context,
+            text: state.loadingText ?? 'Please Wait  a moment ! ',
+          );
+        } else {
+          LoadingScreen().hide();
+        }
+      },
       builder: (context, state) {
         if (state is AuthStateLoggedIn) {
           return const NotesView();

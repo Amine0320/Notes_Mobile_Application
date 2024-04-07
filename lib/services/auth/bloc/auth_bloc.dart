@@ -4,7 +4,8 @@ import 'package:notes_app/services/auth/bloc/auth_event.dart';
 import 'package:notes_app/services/auth/bloc/auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc(AuthProvider provider) : super(const AuthStateOnIntialized()) {
+  AuthBloc(AuthProvider provider)
+      : super(const AuthStateOnIntialized(isLoading: true)) {
     //send email verification
     // attention not to handle in Kaisi App
     on<AuthEvenSendEmailVerification>((event, emit) async {
@@ -20,9 +21,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           password: password,
         );
         await provider.sendEmailVerification();
-        emit(const AuthStateNeedsVerification());
+        emit(const AuthStateNeedsVerification(isLoading: false));
       } on Exception catch (e) {
-        emit(AuthStateRegistering(e));
+        emit(AuthStateRegistering(isLoading: false, execption: e));
       }
     });
     //initialize
@@ -33,11 +34,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(const AuthStateLoggedOut(
           exception: null,
           isLoading: false,
+          loadingText: 'Please Wait while i log you in ',
         ));
       } else if (!user.isEmailVerified) {
-        emit(const AuthStateNeedsVerification());
+        emit(const AuthStateNeedsVerification(isLoading: false));
       } else {
-        emit(AuthStateLoggedIn(user));
+        emit(AuthStateLoggedIn(isLoading: false, user: user));
       }
     });
     // log in
@@ -46,6 +48,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(const AuthStateLoggedOut(
         exception: null,
         isLoading: true,
+        loadingText: '',
       ));
       // await Future.delayed(const Duration(seconds: 3));
       final email = event.email;
@@ -59,19 +62,60 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(const AuthStateLoggedOut(
             exception: null,
             isLoading: false,
+            loadingText: 'Please Wait while i log you in',
           ));
-          emit(const AuthStateNeedsVerification());
+          emit(const AuthStateNeedsVerification(isLoading: false));
         } else {
           emit(const AuthStateLoggedOut(
             exception: null,
             isLoading: false,
+            loadingText: 'Please Wait while i log you in',
           ));
-          emit(AuthStateLoggedIn(user));
+          emit(AuthStateLoggedIn(isLoading: false, user: user));
         }
-        emit(AuthStateLoggedIn(user));
+        emit(AuthStateLoggedIn(isLoading: false, user: user));
       } on Exception catch (e) {
-        emit(AuthStateLoggedOut(exception: e, isLoading: false));
+        emit(AuthStateLoggedOut(
+            exception: e,
+            isLoading: false,
+            loadingText: 'Please Wait while i log you in'));
       }
+    });
+    //forgot password
+    on<AuthEventForgotPassword>((event, emit) async {
+      emit(const AuthStateForgotPassword(
+        exception: null,
+        hasSentEmail: false,
+        isLoading: false,
+      ));
+      final email = event.email;
+      if (email == null) {
+        return; // user just wants to go to forgot-password screen
+      }
+
+      // user wants to actually send a forgot-password email
+      emit(const AuthStateForgotPassword(
+        exception: null,
+        hasSentEmail: false,
+        isLoading: true,
+      ));
+
+      bool didSendEmail;
+      Exception? exception;
+      try {
+        await provider.sendPasswordReset(toEmail: email);
+        didSendEmail = true;
+        exception = null;
+      } on Exception catch (e) {
+        didSendEmail = false;
+        exception = e;
+      }
+
+      emit(AuthStateForgotPassword(
+        exception: exception,
+        hasSentEmail: didSendEmail,
+        isLoading: false,
+      ));
     });
     // log out
     on<AuthEventLogOut>((event, emit) async {
@@ -80,11 +124,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(const AuthStateLoggedOut(
           exception: null,
           isLoading: false,
+          loadingText: '',
         ));
       } on Exception catch (e) {
         emit(AuthStateLoggedOut(
           exception: e,
           isLoading: false,
+          loadingText: '',
         ));
       }
     });

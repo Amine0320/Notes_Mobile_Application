@@ -7,7 +7,6 @@ import 'package:notes_app/services/auth/bloc/auth_bloc.dart';
 import 'package:notes_app/services/auth/bloc/auth_event.dart';
 import 'package:notes_app/services/auth/bloc/auth_state.dart';
 import 'package:notes_app/utilities/dialogs/error_dialog.dart';
-import 'package:notes_app/utilities/dialogs/loading_dialog.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -19,7 +18,6 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
-  CloseDialog? _closeDialogHandler;
 
   @override
   void initState() {
@@ -57,19 +55,6 @@ class _LoginViewState extends State<LoginView> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
         if (state is AuthStateLoggedOut) {
-          final closeDialog = _closeDialogHandler;
-          // closing dialog
-          if (!state.isLoading && closeDialog != null) {
-            closeDialog();
-            _closeDialogHandler = null;
-          }
-          // open dialog
-          if (state.isLoading && closeDialog == null) {
-            _closeDialogHandler = showLoadingDialog(
-              context: context,
-              text: 'Loading .... ',
-            );
-          }
           if (state.exception is UserNotFoundAuthException ||
               state.exception is WrongPasswordAuthException) {
             await showErrorDialog(context, 'User-not-found');
@@ -137,6 +122,13 @@ class _LoginViewState extends State<LoginView> {
               child: const Text('Login'),
               // ),
             ),
+            TextButton(
+                onPressed: () {
+                  context.read<AuthBloc>().add(
+                        const AuthEventForgotPassword(),
+                      );
+                },
+                child: const Text('I forgot my password  ')),
             TextButton(
                 onPressed: () {
                   // Navigator.of(context).pushNamedAndRemoveUntil(
