@@ -67,61 +67,82 @@ class _RegisterViewState extends State<RegisterView> {
       },
       child: Scaffold(
           appBar: AppBar(title: const Text('Register View !')),
-          body: Column(
-            children: [
-              TextField(
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-                autocorrect: false,
-                enableSuggestions: false,
-                keyboardType: TextInputType.emailAddress,
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                      'Enter your email and password to see your notes !'),
+                  TextField(
+                    controller: _emailController,
+                    decoration: const InputDecoration(labelText: 'Email'),
+                    autocorrect: false,
+                    autofocus: true,
+                    enableSuggestions: false,
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  TextField(
+                    controller: _passwordController,
+                    decoration: const InputDecoration(labelText: 'Password'),
+                    obscureText: true,
+                    autocorrect: false,
+                    autofocus: true,
+                    enableSuggestions: false,
+                  ),
+                  Column(
+                    children: [
+                      TextButton(
+                        onPressed: () async {
+                          final email = _emailController.text;
+                          final password = _passwordController.text;
+                          context.read<AuthBloc>().add(AuthEventRegister(
+                                email,
+                                password,
+                              ));
+                          // try {
+                          //   await AuthService.firebase().createUser(
+                          //     email: email,
+                          //     password: password,
+                          //   );
+                          // AuthService.firebase().sendEmailVerification();
+                          // Navigating to verify email view
+                          // Navigator.of(context).pushNamed(verifyEmailRoute);
+                          //   }
+                          //   on WeakPasswordAuthException {
+                          //     await showErrorDialog(context, 'Weak password');
+                          //   } on EmailAlreadyInUseAuthException {
+                          //     await showErrorDialog(context, 'Email already in user');
+                          //   } on InvalidEmailAuthException {
+                          //     await showErrorDialog(context, 'Invalid email address');
+                          //   } on GenericAuthException {
+                          //     await showErrorDialog(context, "Failed to register");
+                          //   }
+                        },
+                        child: const Text('Register'),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      TextButton(
+                          onPressed: () {
+                            // Navigator.of(context).pushNamedAndRemoveUntil(
+                            //   loginRoute,
+                            //   (route) => false,
+                            // );
+                            context
+                                .read<AuthBloc>()
+                                .add(const AuthEventLogOut());
+                          },
+                          child: const Text(
+                              'Already Registered ? Login Here !  ')),
+                    ],
+                  )
+                ],
               ),
-              TextField(
-                controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
-                autocorrect: false,
-                enableSuggestions: false,
-              ),
-              TextButton(
-                onPressed: () async {
-                  final email = _emailController.text;
-                  final password = _passwordController.text;
-                  context.read<AuthBloc>().add(AuthEventRegister(
-                        email,
-                        password,
-                      ));
-                  // try {
-                  //   await AuthService.firebase().createUser(
-                  //     email: email,
-                  //     password: password,
-                  //   );
-                  // AuthService.firebase().sendEmailVerification();
-                  // Navigating to verify email view
-                  // Navigator.of(context).pushNamed(verifyEmailRoute);
-                  //   }
-                  //   on WeakPasswordAuthException {
-                  //     await showErrorDialog(context, 'Weak password');
-                  //   } on EmailAlreadyInUseAuthException {
-                  //     await showErrorDialog(context, 'Email already in user');
-                  //   } on InvalidEmailAuthException {
-                  //     await showErrorDialog(context, 'Invalid email address');
-                  //   } on GenericAuthException {
-                  //     await showErrorDialog(context, "Failed to register");
-                  //   }
-                },
-                child: const Text('Register'),
-              ),
-              TextButton(
-                  onPressed: () {
-                    // Navigator.of(context).pushNamedAndRemoveUntil(
-                    //   loginRoute,
-                    //   (route) => false,
-                    // );
-                    context.read<AuthBloc>().add(const AuthEventLogOut());
-                  },
-                  child: const Text('Already Registered ? Login Here !  '))
-            ],
+            ),
           )),
     );
   }

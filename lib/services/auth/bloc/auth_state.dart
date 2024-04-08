@@ -21,7 +21,7 @@ class AuthStateOnIntialized extends AuthState {
 class AuthStateRegistering extends AuthState {
   final Exception? execption;
   const AuthStateRegistering({
-    required bool isLoading,
+    required isLoading,
     required this.execption,
   }) : super(isLoading: isLoading);
 }

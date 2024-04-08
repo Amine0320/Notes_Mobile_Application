@@ -57,7 +57,8 @@ class _LoginViewState extends State<LoginView> {
         if (state is AuthStateLoggedOut) {
           if (state.exception is UserNotFoundAuthException ||
               state.exception is WrongPasswordAuthException) {
-            await showErrorDialog(context, 'User-not-found');
+            await showErrorDialog(
+                context, 'Cannot find a user with the extends credentials !');
           }
           // else if (state.exception is WrongPasswordAuthException) {
           //   await showErrorDialog(context, 'Wrong crendetials');
@@ -69,78 +70,83 @@ class _LoginViewState extends State<LoginView> {
       },
       child: Scaffold(
         appBar: AppBar(title: const Text('Login')),
-        body: Column(
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-              autocorrect: false,
-              enableSuggestions: false,
-              keyboardType: TextInputType.emailAddress,
-            ),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
-              obscureText: true,
-              autocorrect: false,
-              enableSuggestions: false,
-            ),
-            TextButton(
-              onPressed: () async {
-                final email = _emailController.text;
-                final password = _passwordController.text;
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const Text(
+                  'Please log in to your account in order to interact with and create notes !'),
+              TextField(
+                controller: _emailController,
+                decoration: const InputDecoration(labelText: 'Email'),
+                autocorrect: false,
+                enableSuggestions: false,
+                keyboardType: TextInputType.emailAddress,
+              ),
+              TextField(
+                controller: _passwordController,
+                decoration: const InputDecoration(labelText: 'Password'),
+                obscureText: true,
+                autocorrect: false,
+                enableSuggestions: false,
+              ),
+              TextButton(
+                onPressed: () async {
+                  final email = _emailController.text;
+                  final password = _passwordController.text;
 
-                // await AuthService.firebase().logIn(
-                //   email: email,
-                //   password: password,
-                // );
-                // final user = AuthService.firebase().currentUser;
-                // if (user?.isEmailVerified ?? false) {
-                //   Navigator.of(context).pushNamedAndRemoveUntil(
-                //     notesRoute,
-                //     (route) => false,
-                //   );
-                // } else {
-                //   Navigator.of(context).pushNamedAndRemoveUntil(
-                //     verifyEmailRoute,
-                //     (route) => false,
-                //   );
-                // }
-                context.read<AuthBloc>().add(AuthEventLogIn(
-                      email,
-                      password,
-                    ));
-                // Change on notes app but not in kaisi test app ATTENTION !
-                //   } on UserNotFoundAuthException {
-                //     await showErrorDialog(context, 'User not found');
-                //   } on WrongPasswordAuthException {
-                //     await showErrorDialog(context, 'Wrong Password ');
-                //   } on GenericAuthException {
-                //     await showErrorDialog(context, 'Authentification Error');
-                //   }
-              },
-              child: const Text('Login'),
-              // ),
-            ),
-            TextButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(
-                        const AuthEventForgotPassword(),
-                      );
-                },
-                child: const Text('I forgot my password  ')),
-            TextButton(
-                onPressed: () {
-                  // Navigator.of(context).pushNamedAndRemoveUntil(
-                  //   registerRoute,
-                  //   (route) => false,
+                  // await AuthService.firebase().logIn(
+                  //   email: email,
+                  //   password: password,
                   // );
-                  context.read<AuthBloc>().add(
-                        const AuthEventShouldRegister(),
-                      );
+                  // final user = AuthService.firebase().currentUser;
+                  // if (user?.isEmailVerified ?? false) {
+                  //   Navigator.of(context).pushNamedAndRemoveUntil(
+                  //     notesRoute,
+                  //     (route) => false,
+                  //   );
+                  // } else {
+                  //   Navigator.of(context).pushNamedAndRemoveUntil(
+                  //     verifyEmailRoute,
+                  //     (route) => false,
+                  //   );
+                  // }
+                  context.read<AuthBloc>().add(AuthEventLogIn(
+                        email,
+                        password,
+                      ));
+                  // Change on notes app but not in kaisi test app ATTENTION !
+                  //   } on UserNotFoundAuthException {
+                  //     await showErrorDialog(context, 'User not found');
+                  //   } on WrongPasswordAuthException {
+                  //     await showErrorDialog(context, 'Wrong Password ');
+                  //   } on GenericAuthException {
+                  //     await showErrorDialog(context, 'Authentification Error');
+                  //   }
                 },
-                child: const Text('Not registred yet ? Register Me ! ')),
-          ],
+                child: const Text('Login'),
+                // ),
+              ),
+              TextButton(
+                  onPressed: () {
+                    context.read<AuthBloc>().add(
+                          const AuthEventForgotPassword(),
+                        );
+                  },
+                  child: const Text('I forgot my password  ')),
+              TextButton(
+                  onPressed: () {
+                    // Navigator.of(context).pushNamedAndRemoveUntil(
+                    //   registerRoute,
+                    //   (route) => false,
+                    // );
+                    context.read<AuthBloc>().add(
+                          const AuthEventShouldRegister(),
+                        );
+                  },
+                  child: const Text('Not registred yet ? Register Me ! ')),
+            ],
+          ),
         ),
       ),
     );

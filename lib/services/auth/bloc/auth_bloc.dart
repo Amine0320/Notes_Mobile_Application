@@ -6,6 +6,12 @@ import 'package:notes_app/services/auth/bloc/auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(AuthProvider provider)
       : super(const AuthStateOnIntialized(isLoading: true)) {
+    on<AuthEventShouldRegister>((event, emit) {
+      emit(const AuthStateRegistering(
+        isLoading: false,
+        execption: null,
+      ));
+    });
     //send email verification
     // attention not to handle in Kaisi App
     on<AuthEvenSendEmailVerification>((event, emit) async {
