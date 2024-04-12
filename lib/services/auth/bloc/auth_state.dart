@@ -8,35 +8,20 @@ abstract class AuthState {
   final String? loadingText;
   const AuthState({
     required this.isLoading,
-    this.loadingText = 'Please wait a minute ',
+    this.loadingText = 'Please wait a moment',
   });
 }
 
-class AuthStateOnIntialized extends AuthState {
-  const AuthStateOnIntialized({
-    required bool isLoading,
-  }) : super(isLoading: isLoading);
+class AuthStateUninitialized extends AuthState {
+  const AuthStateUninitialized({required bool isLoading})
+      : super(isLoading: isLoading);
 }
 
 class AuthStateRegistering extends AuthState {
-  final Exception? execption;
+  final Exception? exception;
   const AuthStateRegistering({
+    required this.exception,
     required isLoading,
-    required this.execption,
-  }) : super(isLoading: isLoading);
-}
-
-class AuthStateLoggedIn extends AuthState {
-  final AuthUser user;
-  const AuthStateLoggedIn({
-    required bool isLoading,
-    required this.user,
-  }) : super(isLoading: isLoading);
-}
-
-class AuthStateNeedsVerification extends AuthState {
-  const AuthStateNeedsVerification({
-    required bool isLoading,
   }) : super(isLoading: isLoading);
 }
 
@@ -50,12 +35,25 @@ class AuthStateForgotPassword extends AuthState {
   }) : super(isLoading: isLoading);
 }
 
+class AuthStateLoggedIn extends AuthState {
+  final AuthUser user;
+  const AuthStateLoggedIn({
+    required this.user,
+    required bool isLoading,
+  }) : super(isLoading: isLoading);
+}
+
+class AuthStateNeedsVerification extends AuthState {
+  const AuthStateNeedsVerification({required bool isLoading})
+      : super(isLoading: isLoading);
+}
+
 class AuthStateLoggedOut extends AuthState with EquatableMixin {
   final Exception? exception;
   const AuthStateLoggedOut({
     required this.exception,
     required bool isLoading,
-    required String? loadingText,
+    String? loadingText,
   }) : super(
           isLoading: isLoading,
           loadingText: loadingText,

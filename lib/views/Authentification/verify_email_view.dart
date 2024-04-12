@@ -28,7 +28,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                 // converting to AuthBloc
                 context
                     .read<AuthBloc>()
-                    .add(const AuthEvenSendEmailVerification());
+                    .add(const AuthEventSendEmailVerification());
               },
               child: const Text('send email verification ! ')),
           TextButton(
